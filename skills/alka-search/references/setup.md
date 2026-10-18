@@ -1,13 +1,55 @@
 # Install and connect Alka Search MCP
 
-The skill and server are separate. This skill needs a desktop/local agent client with MCP stdio support, Git, Node.js 20.18.1 or newer (Node.js 22 or 24 LTS recommended), and internet access. A cloud-only agent without a local MCP runtime cannot run this server directly.
+The skill and server are separate. This skill needs a local agent client with MCP stdio support, Node.js 20.18.1 or newer (Node.js 22 or 24 LTS recommended), npm/npx, and internet access. A cloud-only agent without a local MCP runtime cannot run this server directly.
 
-## Build from the author's GitHub release
+## Connect using npm
 
-In a terminal, choose a directory for the checkout and run:
+The package is `@alkasima/alka-search-mcp`, maintained by `alkasima`, with source at https://github.com/alkasima/Alka-Search-MCP. Use the pinned release `@alkasima/alka-search-mcp@1.0.2`.
+
+When setup is requested, add a local stdio server named `alka-search` in the client's MCP settings. Loading the skill through Agensi alone does not install the server or change client configuration.
+
+### macOS / Linux
+
+For clients using an `mcpServers` JSON object:
+
+```json
+{
+  "mcpServers": {
+    "alka-search": {
+      "command": "npx",
+      "args": ["--yes", "@alkasima/alka-search-mcp@1.0.2"]
+    }
+  }
+}
+```
+
+### Windows
+
+Launch the npm command wrapper through `cmd`:
+
+```json
+{
+  "mcpServers": {
+    "alka-search": {
+      "command": "cmd",
+      "args": ["/d", "/c", "npx", "--yes", "@alkasima/alka-search-mcp@1.0.2"]
+    }
+  }
+}
+```
+
+These commands download and run the pinned package from npm on first use. No Git checkout or TypeScript build is needed. Installation changes local files and requires network access to npm. Preserve existing MCP entries; configuration location and wrapper keys vary by client.
+
+Restart or reconnect the server and verify that `web_search`, `fetch_page`, and `fetch_llms_txt` appear before claiming setup succeeded. If npx cannot be found, make Node.js available in the client's environment and restart it. Allow time for the initial package download.
+
+Running `npx --yes @alkasima/alka-search-mcp@1.0.2` directly in a terminal starts the server and waits for MCP messages; it is not a web interface or a chat prompt. The intended caller is the agent's MCP client.
+
+## Alternative: build from GitHub
+
+Use this if the user prefers to inspect or build the source. Git is required for this path.
 
 ```sh
-git clone --branch v1.0.1 --depth 1 https://github.com/alkasima/Alka-Search-MCP.git
+git clone --branch v1.0.2 --depth 1 https://github.com/alkasima/Alka-Search-MCP.git
 cd Alka-Search-MCP
 npm ci --ignore-scripts
 npm run build
@@ -15,32 +57,9 @@ npm test
 npm run smoke
 ```
 
-The offline smoke check starts the server over stdio, discovers all three tools, and verifies that a private URL is blocked. It does not call a search provider.
+Then configure a local stdio server with command `node` (or its absolute executable path) and one argument: the absolute path to `Alka-Search-MCP/dist/index.js`. On Windows, JSON paths can use forward slashes, such as `C:/Users/your-name/Alka-Search-MCP/dist/index.js`.
 
-The GitHub repository is the distribution source for this release. Do not assume that the similarly named npm package exists or belongs to this project.
-
-## Register a local stdio server
-
-In the client's MCP server settings, add a server named `alka-search` with:
-
-- Transport: stdio
-- Command: the absolute path to your `node` executable, or `node` if available to the client
-- Arguments: one item, the absolute path to `Alka-Search-MCP/dist/index.js`
-
-Clients that use an `mcpServers` JSON object can use this shape, replacing the path:
-
-```json
-{
-  "mcpServers": {
-    "alka-search": {
-      "command": "node",
-      "args": ["/absolute/path/Alka-Search-MCP/dist/index.js"]
-    }
-  }
-}
-```
-
-On Windows, use a JSON-safe path such as `C:/Users/your-name/Alka-Search-MCP/dist/index.js`. Merge the server entry into the existing configuration rather than replacing other entries. Configuration location and wrapper keys vary by client; follow that client's current MCP settings instructions. Restart or reconnect the server and verify that `web_search`, `fetch_page`, and `fetch_llms_txt` appear before claiming setup succeeded.
+The source checkout's offline smoke check starts the server over stdio, discovers all three tools, and verifies that a private URL is blocked. It does not call a search provider.
 
 ## Optional configuration
 

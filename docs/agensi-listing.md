@@ -26,7 +26,7 @@ The workflow explains when to search or fetch directly, how to cite evidence, ho
 
 ### Requirements
 
-This listing is a companion skill. Install and connect the Alka Search MCP server separately using the included setup guide. You need Git, Node.js 20.18.1 or newer, internet access, and a local agent client that supports MCP stdio servers. Loading the skill through Agensi alone does not install the server.
+This listing is a companion skill. Install and connect the Alka Search MCP server separately using the included setup guide. You need Node.js 20.18.1 or newer with npm/npx, internet access, and a local agent client that supports MCP stdio servers. Run npx --yes @alkasima/alka-search-mcp@1.0.2 through your MCP client; no Git checkout or build is required for the npm package. Git remains optional for source-based installation. Loading the skill through Agensi alone does not install the server.
 
 The server and companion skill are free and MIT licensed. The default providers require no API key. Optional Tavily and SearXNG fallbacks require your own configuration; Tavily may carry separate costs.
 
@@ -46,4 +46,4 @@ Uses portable SKILL.md instructions and standard MCP stdio tools. Server initial
 
 ## Submission file
 
-`release/alka-search-1.0.1.zip` contains the `alka-search/` folder with SKILL.md, the setup reference, and the MIT license. It contains no credentials, dependencies, executables, or automatic installation hooks.
+`release/alka-search-1.0.2.zip` contains the `alka-search/` folder with SKILL.md, the setup reference, and the MIT license. It contains no credentials, dependencies, executables, or automatic installation hooks.

@@ -49,8 +49,8 @@ async function rateLimitedCall<T>(
 // ─── Server setup ─────────────────────────────────────────────────
 const server = new McpServer(
   {
-    name: "free-search-mcp",
-    version: "1.0.1",
+    name: "alka-search-mcp",
+    version: "1.0.2",
   },
   {
     capabilities: { tools: {} },
@@ -254,7 +254,7 @@ async function main() {
   const transport = new StdioServerTransport();
   await server.connect(transport);
   // Log startup to stderr (never stdout - that's for MCP protocol)
-  console.error("free-search-mcp server started");
+  console.error("alka-search-mcp server started");
   console.error(
     `Engines: DuckDuckGo, Mojeek, Brave Search | Timeout: ${ENGINE_TIMEOUT_MS}ms`
   );

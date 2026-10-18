@@ -2,10 +2,12 @@
 from pathlib import Path
 from zipfile import ZipFile, ZipInfo, ZIP_DEFLATED
 import hashlib
+import json
 
 root = Path(__file__).resolve().parents[1]
 source = root / "skills" / "alka-search"
-output = root / "release" / "alka-search-1.0.1.zip"
+version = json.loads((root / "package.json").read_text(encoding="utf-8"))["version"]
+output = root / "release" / f"alka-search-{version}.zip"
 files = ["SKILL.md", "references/setup.md", "LICENSE"]
 output.parent.mkdir(exist_ok=True)
 with ZipFile(output, "w", compression=ZIP_DEFLATED) as archive:

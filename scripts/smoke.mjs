@@ -1,22 +1,34 @@
 import assert from "node:assert/strict";
 import { fileURLToPath } from "node:url";
+import { readFileSync } from "node:fs";
+import { parseArgs } from "node:util";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
 
-const client = new Client({ name: "alka-search-smoke", version: "1.0.0" });
+const { values } = parseArgs({ options: { server: { type: "string" }, npx: { type: "boolean" }, live: { type: "boolean" } } });
+if (values.server && values.npx) throw new Error("Choose --server or --npx, not both.");
+const { version } = JSON.parse(readFileSync(new URL("../package.json", import.meta.url), "utf8"));
+assert.match(version, /^\d+\.\d+\.\d+$/);
+const packageSpec = "@alkasima/alka-search-mcp@" + version;
+const command = values.npx ? (process.platform === "win32" ? "cmd.exe" : "npx") : process.execPath;
+const args = values.npx
+  ? [...(process.platform === "win32" ? ["/d", "/c", "npx"] : []), "--yes", packageSpec]
+  : [values.server || fileURLToPath(new URL("../dist/index.js", import.meta.url))];
+const client = new Client({ name: "alka-search-smoke", version });
 const transport = new StdioClientTransport({
-  command: process.execPath,
-  args: [fileURLToPath(new URL("../dist/index.js", import.meta.url))],
+  command,
+  args,
   stderr: "pipe",
 });
 try {
-  await client.connect(transport);
+  await client.connect(transport, { timeout: 120000 });
+  assert.equal(client.getServerVersion()?.version, version);
   const { tools } = await client.listTools();
   assert.deepEqual(tools.map(({ name }) => name).sort(), ["fetch_llms_txt", "fetch_page", "web_search"]);
   const blocked = await client.callTool({ name: "fetch_page", arguments: { url: "http://[::ffff:127.0.0.1]/" } });
   assert.match(blocked.content[0].text, /private/);
   console.log("PASS: MCP initialization, tool discovery, and blocked private URL.");
-  if (process.argv.includes("--live")) {
+  if (values.live) {
     for (const [name, args] of [
       ["web_search", { query: "TypeScript official documentation", max_results: 3 }],
       ["fetch_page", { url: "https://example.com", max_chars: 500 }],

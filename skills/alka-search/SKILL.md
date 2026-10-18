@@ -4,7 +4,7 @@ description: Search the public web, read pages, and retrieve llms.txt documentat
 license: MIT
 metadata:
   author: alkasima
-  version: "1.0.1"
+  version: "1.0.2"
 ---
 
 # Alka Search

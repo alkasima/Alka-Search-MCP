@@ -12,12 +12,67 @@ Free public-web search and page reading for local MCP clients. Runs with Node.js
 
 Search results include titles, URLs, snippets, and provider status. Results are cached for ten minutes. Retrieved pages and documentation are labeled as untrusted content.
 
-## Install from GitHub
+## Run from npm
 
-Requirements: Git and Node.js **20.18.1 or newer**. Node.js 22 or 24 LTS is recommended.
+Requires Node.js **20.18.1 or newer**, with npm/npx. Node.js 22 or 24 LTS is recommended. Git and a local TypeScript build are not required for the npm package.
 
 ```sh
-git clone --branch v1.0.1 --depth 1 https://github.com/alkasima/Alka-Search-MCP.git
+npx --yes @alkasima/alka-search-mcp@1.0.2
+```
+
+This starts a stdio MCP server, which waits for messages from an MCP client. It does not open a website or an interactive chat. On first use, npx downloads the package and its dependencies from npm.
+
+## Connect your agent
+
+Add a **local stdio MCP server** named `alka-search`. For clients that use an `mcpServers` JSON object, use the configuration for your operating system.
+
+### macOS / Linux
+
+```json
+{
+  "mcpServers": {
+    "alka-search": {
+      "command": "npx",
+      "args": ["--yes", "@alkasima/alka-search-mcp@1.0.2"]
+    }
+  }
+}
+```
+
+### Windows
+
+Use `cmd` to launch the npm command wrapper:
+
+```json
+{
+  "mcpServers": {
+    "alka-search": {
+      "command": "cmd",
+      "args": ["/d", "/c", "npx", "--yes", "@alkasima/alka-search-mcp@1.0.2"]
+    }
+  }
+}
+```
+
+Preserve other server entries. Configuration location and wrapper keys vary by application; follow your client's MCP setup documentation. If the client cannot find npx, make Node.js available in its environment and restart the client.
+
+Reconnect the server and verify that `web_search`, `fetch_page`, and `fetch_llms_txt` appear. Initial setup may take longer while npm downloads dependencies. The server writes diagnostics to stderr and reserves stdout for MCP messages.
+
+### Optional global install
+
+```sh
+npm install -g @alkasima/alka-search-mcp@1.0.2
+alka-search-mcp
+```
+
+Use the installed executable in your client's stdio configuration. On Windows, command wrappers may need `cmd /d /c`, as above.
+
+## Build from GitHub
+
+For development or source-based installation, Git is also required:
+
+```sh
+git clone --branch v1.0.2 --depth 1 https://github.com/alkasima/Alka-Search-MCP.git
 cd Alka-Search-MCP
 npm ci --ignore-scripts
 npm run build
@@ -25,32 +80,7 @@ npm test
 npm run smoke
 ```
 
-This release is distributed from GitHub. The npm package named `free-search-mcp` is not currently published by this project.
-
-## Connect your agent
-
-Add a **local stdio MCP server** in your client's settings:
-
-- Name: `alka-search`
-- Command: `node` (or the absolute path to the Node.js executable)
-- Arguments: the absolute path to the built `dist/index.js`
-
-For clients with an `mcpServers` JSON configuration:
-
-```json
-{
-  "mcpServers": {
-    "alka-search": {
-      "command": "node",
-      "args": ["/absolute/path/Alka-Search-MCP/dist/index.js"]
-    }
-  }
-}
-```
-
-On Windows, use forward slashes in JSON paths, such as `C:/Users/your-name/Alka-Search-MCP/dist/index.js`. Preserve other server entries. Follow your client's current documentation for its config location and wrapper keys; these vary by application.
-
-Reconnect the server and verify that all three tools appear. The server writes diagnostics to stderr and reserves stdout for MCP messages.
+For this installation method, configure the server command as `node` and pass the absolute path to `Alka-Search-MCP/dist/index.js` as its one argument.
 
 ## Companion skill
 

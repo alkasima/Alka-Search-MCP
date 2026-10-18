@@ -1,11 +1,11 @@
 {
-  "name": "free-search-mcp",
-  "version": "1.0.1",
+  "name": "@alkasima/alka-search-mcp",
+  "version": "1.0.2",
   "description": "Free web search MCP server - no Docker, no paid API, just fetch-based search",
   "type": "module",
   "main": "dist/index.js",
   "bin": {
-    "free-search-mcp": "dist/index.js"
+    "alka-search-mcp": "dist/index.js"
   },
   "files": [
     "dist"
@@ -18,7 +18,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "smoke": "node scripts/smoke.mjs",
-    "prepublishOnly": "npm run build"
+    "prepack": "npm run build"
   },
   "keywords": [
     "mcp",
@@ -30,6 +30,14 @@
   ],
   "author": "Kasim (@alkasima)",
   "license": "MIT",
+  "homepage": "https://github.com/alkasima/Alka-Search-MCP#readme",
+  "bugs": {
+    "url": "https://github.com/alkasima/Alka-Search-MCP/issues"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/alkasima/Alka-Search-MCP.git"
