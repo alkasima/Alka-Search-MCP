@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { fileURLToPath } from "node:url";
 import { readFileSync } from "node:fs";
+import { tmpdir } from "node:os";
 import { parseArgs } from "node:util";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
@@ -18,6 +19,8 @@ const client = new Client({ name: "alka-search-smoke", version });
 const transport = new StdioClientTransport({
   command,
   args,
+  // Run npx outside this checkout so npm resolves the published package.
+  cwd: values.npx ? tmpdir() : undefined,
   stderr: "pipe",
 });
 try {
