@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { afterEach, describe, it, expect, vi } from "vitest";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { search as duckduckgoSearch } from "../src/engines/duckduckgo.js";
@@ -7,6 +7,20 @@ const fixturePath = resolve(import.meta.dirname, "fixtures", "duckduckgo.html");
 const html = readFileSync(fixturePath, "utf-8");
 
 describe("DuckDuckGo Engine", () => {
+  afterEach(() => vi.unstubAllGlobals());
+
+  it("runs the actual search parser against the saved response", async () => {
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response(html)));
+    const result = await duckduckgoSearch("test", new AbortController().signal);
+    expect(result.blocked).toBe(false);
+    expect(result.results.length).toBeGreaterThanOrEqual(5);
+    for (const entry of result.results) {
+      expect(entry.title).not.toBe("");
+      expect(entry.url).toMatch(/^https?:\/\//);
+      expect(entry.url).not.toContain("uddg=");
+    }
+  });
+
   it("should not be blocked by the fixture page", () => {
     // The fixture should contain real results, not a CAPTCHA
     expect(html.includes("captcha")).toBe(false);

@@ -7,6 +7,7 @@ import { SearchCache } from "./cache.js";
 import { mergeResults, formatResults } from "./merge.js";
 import { fetchPage } from "./fetchPage.js";
 import { fetchLlmsTxt } from "./llmsTxt.js";
+import { requestTimeout } from "./http.js";
 
 // ─── Engine imports ───────────────────────────────────────────────
 import { search as duckduckgoSearch } from "./engines/duckduckgo.js";
@@ -16,7 +17,7 @@ import { search as tavilySearch } from "./engines/tavily.js";
 import { search as searxngSearch } from "./engines/searxng.js";
 
 // ─── Constants ────────────────────────────────────────────────────
-const ENGINE_TIMEOUT_MS = parseInt(process.env.REQUEST_TIMEOUT_MS || "", 10) || 8000;
+const ENGINE_TIMEOUT_MS = requestTimeout(8000);
 const ENGINE_GAP_MS = 300; // Min gap between requests to same engine
 
 // ─── Cache ────────────────────────────────────────────────────────
@@ -49,7 +50,7 @@ async function rateLimitedCall<T>(
 const server = new McpServer(
   {
     name: "free-search-mcp",
-    version: "1.0.0",
+    version: "1.0.1",
   },
   {
     capabilities: { tools: {} },
